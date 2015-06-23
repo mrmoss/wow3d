@@ -7,27 +7,9 @@
 wow3d_t wow(640,480,false);
 std::vector<model_t*> models;
 
-void create_ship()
-{
-	model_t* model=new model_t(wow,"media/space_cruiser_4.obj");
-
-	if(model==nullptr)
-		throw std::runtime_error("Could not allocate memory for ship!");
-
-	models.push_back(model);
-	model->set_texture("media/space_cruiser_4_color.png");
-	//model->set_bumpmap("media/space_cruiser_4_bump.png");
-	//model->set_lighting(true);
-	model->load();
-}
-
-void loop(const double& dt,const wow3d_event_receiver_t& event)
-{
-	if(event.key_down[KEY_KEY_W])
-		wow.set_position(wow.get_position()+vector3df(0,0,500*dt));
-	if(event.key_down[KEY_KEY_S])
-		wow.set_position(wow.get_position()-vector3df(0,0,500*dt));
-}
+void create_ship();
+void end();
+void loop(const double& dt,const wow3d_event_receiver_t& event);
 
 int main()
 {
@@ -51,12 +33,42 @@ int main()
 		std::cout<<"Unknown error."<<std::endl;
 	}
 
+	end();
+
+	return 0;
+}
+
+void create_ship()
+{
+	model_t* model=new model_t(wow,"media/space_cruiser_4.obj");
+
+	if(model==nullptr)
+		throw std::runtime_error("Could not allocate memory for ship!");
+
+	models.push_back(model);
+	model->set_texture("media/space_cruiser_4_color.png");
+	//model->set_bumpmap("media/space_cruiser_4_bump.png");
+	//model->set_lighting(true);
+	model->load();
+}
+
+void end()
+{
 	for(auto ii:models)
 		delete ii;
 
 	models.clear();
-
 	wow.stop();
+	exit(0);
+}
 
-	return 0;
+void loop(const double& dt,const wow3d_event_receiver_t& event)
+{
+	if(event.key_down[KEY_ESCAPE])
+		end();
+
+	if(event.key_down[KEY_KEY_W])
+		wow.set_position(wow.get_position()+vector3df(0,0,500*dt));
+	if(event.key_down[KEY_KEY_S])
+		wow.set_position(wow.get_position()-vector3df(0,0,500*dt));
 }
